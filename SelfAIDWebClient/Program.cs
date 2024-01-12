@@ -33,3 +33,7 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
+
+
+//Czasem przy zapisz musze czekac az wyskoczy message i dopiero przy drugim kliknieciu
+// Bardziej szcvzegolowy komunikat

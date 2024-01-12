@@ -24,20 +24,12 @@ internal class EmotionService : IEmotionService
         {
             var itemJson = new StringContent(JsonConvert.SerializeObject(emotion), Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(urlPostfix, itemJson);
-
-            /*
-            TODO: Teraz nie mogę tego tak zrobić, bo gdy emocja nie jest unikalna to 
-            wtedy jest zwracany Success = false i nie wyłapuję tej odpowiedzi z tym ifem
             if(response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<ServiceResponse<List<GetEmotionDto>>>(responseBody);
             }
-
             return null;
-            */
-
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<ServiceResponse<List<GetEmotionDto>>>(content);
         }
         catch (Exception ex)
         {
@@ -76,7 +68,7 @@ internal class EmotionService : IEmotionService
         try
         {
             var itemJson = new StringContent(JsonConvert.SerializeObject(emotion), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PutAsync($"{urlPostfix}/{emotion.Name}", itemJson);
+            var response = await _httpClient.PutAsync($"{urlPostfix}", itemJson);
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
@@ -123,7 +115,7 @@ internal class EmotionService : IEmotionService
             return new ServiceResponse<List<GetEmotionDto>>
             {
                 Success = false,
-                Message = "Name cannot be empty"
+                Message = "Nazwa emocji, którą chcesz usunąć nie może być pusta"
             };
         }
 

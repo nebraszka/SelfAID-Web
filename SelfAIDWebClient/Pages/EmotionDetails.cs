@@ -20,12 +20,21 @@ public partial class EmotionDetails : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
+        // Update emotion
         if(!string.IsNullOrEmpty(Name))
         {
-            var emotionResponse = await emotionService.GetEmotionByName(Name);
-            if(emotionResponse != null && emotionResponse.Data != null)
+            var response = await emotionService.GetEmotionByName(Name);
+            if(response == null)
             {
-                emotion = emotionResponse.Data;
+                Message = "Błąd pobierania emocji";
+            }
+            if(response.Success)
+            {
+                emotion = response.Data;
+            }
+            else
+            {
+                Message = $"Błąd pobierania emocji: {response.Message}";
             }
         }
     }
@@ -34,33 +43,52 @@ public partial class EmotionDetails : ComponentBase
     {
         if(string.IsNullOrEmpty(Name))
         {
-            var result = await emotionService.AddEmotion(new AddEmotionDto { Name = emotion.Name, Description = emotion.Description });
-            if(result != null && result.Success)
+            var response = await emotionService.AddEmotion(new AddEmotionDto { Name = emotion.Name, Description = emotion.Description });
+            if(response == null)
             {
-                GoToEmotions();
+                Message = "Błąd dodawania emocji";
+                StateHasChanged();
             }
             else
             {
-                Message = "Something went wrong. Please try again.";
+                if(response.Success)
+                {
+                    GoToEmotions();
+                }
+                else
+                {
+                    Message = $"Błąd dodawania emocji: {response.Message}";
+                    StateHasChanged();
+                }
             }
         }
         else
         {
-            var updateResult = await emotionService.UpdateEmotion(new UpdateEmotionDto { Name = emotion.Name, Description = emotion.Description });
-            if(updateResult != null && updateResult.Success && updateResult.Data != null)
+            var response = await emotionService.UpdateEmotion(new UpdateEmotionDto { Name = emotion.Name, Description = emotion.Description });
+            if(response == null)
             {
-                GoToEmotions();
+                Message = "Błąd aktualizacji emocji";
+                StateHasChanged();
             }
             else
             {
-                Message = "Something went wrong. Please try again.";
+                if(response.Success)
+                {
+                    GoToEmotions();
+                }
+                else
+                {
+                    Message = $"Błąd aktualizacji emocji: {response.Message}";
+                    StateHasChanged();
+                }
             }
         }
     }
 
     protected void HandleInvalidRequest()
     {
-        Message = "There are some validation errors. Please try again.";
+        Message = "Błąd walidacji danych";
+        StateHasChanged();
     }
 
     protected void GoToEmotions()
@@ -70,15 +98,23 @@ public partial class EmotionDetails : ComponentBase
 
       protected async Task DeleteEmotion()
     {
-        Message = string.Empty;
-        var emotionResponse = await emotionService.DeleteEmotion(emotion.Name);
-        if(emotionResponse != null && emotionResponse.Success)
+        var response = await emotionService.DeleteEmotion(emotion.Name);
+        if(response == null)
         {
-            navigationManager.NavigateTo("/emocje");
+            Message = "Błąd usuwania emocji";
+            StateHasChanged();
         }
         else
         {
-            Message = "Something went wrong. Please try again.";
+            if(response.Success)
+            {
+                GoToEmotions();
+            }
+            else
+            {
+                Message = $"Błąd usuwania emocji: {response.Message}";
+                StateHasChanged();
+            }
         }
     }
 }

@@ -17,18 +17,18 @@ public partial class Emotions : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await emotionService.GetAllEmotions();
+        var response = await emotionService.GetAllEmotions();
 
-        if (result != null)
+        if (response != null)
         {
-            if (result.Success)
+            if (response.Success)
             {
-                emotions = result.Data;
+                emotions = response.Data;
             }
             else
             {
                 emotions = new List<GetEmotionDto>();
-                emotionsListMessage = $"{result.Message}";
+                emotionsListMessage = $"{response.Message}";
                 emotionsListClass = "alert-danger";
             }
         }
@@ -38,43 +38,5 @@ public partial class Emotions : ComponentBase
             emotionsListMessage = "Błąd pobierania danych";
             emotionsListClass = "alert-danger";
         }
-    }
-
-    private async Task AddEmotion()
-    {
-        var result = await emotionService.AddEmotion(newEmotion);
-
-        if (result.Success)
-        {
-            addEmotionstatusMessage = $"Emocja {newEmotion.Name} dodana";
-            addEmotionstatusClass = "alert-success";
-            emotions = result.Data;
-        }
-        else
-        {
-            addEmotionstatusMessage = $"{result.Message}";
-            addEmotionstatusClass = "alert-danger";
-            OnInitializedAsync();
-        }
-
-        newEmotion = new AddEmotionDto();
-    }
-
-    private async Task DeleteEmotion(string name)
-    {
-        // var result = await EmotionService.DeleteEmotionAsync(id);
-
-        // if (result.Success)
-        // {
-        //     statusMessage = $"Emocja usunięta";
-        //     statusClass = "alert-success";
-        //     emotions = result;
-        // }
-        // else
-        // {
-        //     statusMessage = $"Error: {result.Message}";
-        //     statusClass = "alert-danger";
-        //     emotions = await EmotionService.GetEmotionsAsync();
-        // }
     }
 }
