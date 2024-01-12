@@ -5,9 +5,6 @@ using SelfAID.CommonLib.Models;
 using SelfAID.CommonLib.Services;
 using Microsoft.EntityFrameworkCore;
 
-// Mapowanie repos
-// try catch middleware
-
 namespace SelfAID.API.Services.EmotionService
 {
     public class EmotionService : IEmotionService
@@ -27,7 +24,7 @@ namespace SelfAID.API.Services.EmotionService
             if (addEmotionDto.Name == string.Empty)
             {
                 serviceResponse.Success = false;
-                serviceResponse.Message = "Emotion name is required.";
+                serviceResponse.Message = "Wymagana jest nazwa emocji";
                 return serviceResponse;
             }
             try
@@ -35,7 +32,7 @@ namespace SelfAID.API.Services.EmotionService
                 if (await _context.Emotions.AnyAsync(e => e.Name.ToLower() == addEmotionDto.Name.ToLower()))
                 {
                     serviceResponse.Success = false;
-                    serviceResponse.Message = $"Emotion name must be unique. Emotion with name {addEmotionDto.Name} already exists.";
+                    serviceResponse.Message = $"Nazwa emocji musi być unikatowa. Emocja o nazwie {addEmotionDto.Name} istnieje już w bazie";
                     return serviceResponse;
                 }
 
@@ -53,7 +50,7 @@ namespace SelfAID.API.Services.EmotionService
             catch (Exception ex)
             {
                 serviceResponse.Success = false;
-                serviceResponse.Message = "Error adding emotion: " + ex.Message;
+                serviceResponse.Message = "Błąd przy dodawaniu emocji: " + ex.Message;
             }
             return serviceResponse;
         }
@@ -71,7 +68,7 @@ namespace SelfAID.API.Services.EmotionService
             catch (Exception ex)
             {
                 serviceResponse.Success = false;
-                serviceResponse.Message = "Error getting emotions: " + ex.Message;
+                serviceResponse.Message = "Błąd przy pobieraniu emocji: " + ex.Message;
             }
             return serviceResponse;
         }
@@ -88,7 +85,7 @@ namespace SelfAID.API.Services.EmotionService
                 if (emotion == null)
                 {
                     serviceResponse.Success = false;
-                    serviceResponse.Message = $"Emotion {name} not found.";
+                    serviceResponse.Message = $"Emocja {name} nie została znaleziona";
                     return serviceResponse;
                 }
 
@@ -97,7 +94,7 @@ namespace SelfAID.API.Services.EmotionService
             catch (Exception ex)
             {
                 serviceResponse.Success = false;
-                serviceResponse.Message = $"Error getting emotion {name}: " + ex.Message;
+                serviceResponse.Message = $"Błąd przy pobieraniu emocji {name}: " + ex.Message;
             }
             return serviceResponse;
         }
@@ -110,7 +107,7 @@ namespace SelfAID.API.Services.EmotionService
                 if (emotion == null)
                 {
                     serviceResponse.Success = false;
-                    serviceResponse.Message = $"Emotion {updateEmotionDto.Name} not found.";
+                    serviceResponse.Message = $"Emocja {updateEmotionDto.Name} nie została znaleziona";
                     return serviceResponse;
                 }
                 if (updateEmotionDto.Name != string.Empty)
@@ -127,7 +124,7 @@ namespace SelfAID.API.Services.EmotionService
             catch (Exception ex)
             {
                 serviceResponse.Success = false;
-                serviceResponse.Message = "Error updating emotion: " + ex.Message;
+                serviceResponse.Message = "Błąd przy aktualizacji emocji: " + ex.Message;
             }
             return serviceResponse;
         }
@@ -142,7 +139,7 @@ namespace SelfAID.API.Services.EmotionService
                 if (emotion == null)
                 {
                     serviceResponse.Success = false;
-                    serviceResponse.Message = $"Emotion {name} not found.";
+                    serviceResponse.Message = $"Emocja {name} nie została znaleziona";
                     return serviceResponse;
                 }
 
@@ -153,7 +150,7 @@ namespace SelfAID.API.Services.EmotionService
             catch (Exception ex)
             {
                 serviceResponse.Success = false;
-                serviceResponse.Message = $"Error deleting emotion {name}: " + ex.Message;
+                serviceResponse.Message = $"Błąd przy usuwaniu emocji {name}: " + ex.Message;
             }
             return serviceResponse;
         }
@@ -167,7 +164,7 @@ namespace SelfAID.API.Services.EmotionService
                 if (emotions == null)
                 {
                     serviceResponse.Success = false;
-                    serviceResponse.Message = $"No emotions found.";
+                    serviceResponse.Message = $"Nie znaleziono emocji";
                     return serviceResponse;
                 }
                 _context.Emotions.RemoveRange(emotions);
@@ -177,7 +174,7 @@ namespace SelfAID.API.Services.EmotionService
             catch (Exception ex)
             {
                 serviceResponse.Success = false;
-                serviceResponse.Message = $"Error deleting emotions: " + ex.Message;
+                serviceResponse.Message = $"Błąd przy usuwaniu emocji: " + ex.Message;
             }
             return serviceResponse;
         }

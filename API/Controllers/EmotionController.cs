@@ -20,10 +20,6 @@ namespace SelfAID.API.Controllers
         public async Task<ActionResult<ServiceResponse<List<GetEmotionDto>>>> GetAllEmotion() 
         {
             var response = await _emotionService.GetAllEmotions();
-            if (response.Data == null)
-            {
-                return NotFound(response);
-            }
             return Ok(response);
         }
 
@@ -39,10 +35,6 @@ namespace SelfAID.API.Controllers
         public async Task<ActionResult<ServiceResponse<List<GetEmotionDto>>>> PostEmotion([FromBody] AddEmotionDto emotion)
         {
             var response = await _emotionService.AddEmotion(emotion);
-            if (response.Data == null)
-            {
-                return NotFound(response);
-            }
             return Ok(response);
         }
 
