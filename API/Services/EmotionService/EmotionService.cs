@@ -113,12 +113,6 @@ namespace SelfAID.API.Services.EmotionService
                     serviceResponse.Message = $"Emotion {updateEmotionDto.Name} not found.";
                     return serviceResponse;
                 }
-                if (await _context.Emotions.AnyAsync(e => e.Name.ToLower() == updateEmotionDto.Name.ToLower()))
-                {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = $"Emotion name must be unique. Emotion with name {updateEmotionDto.Name} already exists.";
-                    return serviceResponse;
-                }
                 if (updateEmotionDto.Name != string.Empty)
                 {
                     emotion.Name = updateEmotionDto.Name;

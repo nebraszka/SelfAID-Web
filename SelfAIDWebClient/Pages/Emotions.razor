@@ -41,7 +41,7 @@ else
         @if (emotions.Count == 0)
             {
                 <tr>
-                    <td colspan="2">Brak emocji</td>
+                    <td colspan="3">Brak emocji</td>
                 </tr>
             }
             @foreach (var emotion in emotions)
@@ -50,7 +50,7 @@ else
                     <td>@emotion.Name</td>
                     <td>@emotion.Description</td>
                     <td>
-                        <button class="btn btn-primary" @onclick="@(() => DeleteEmotion(emotion.Name))">Usuń</button>
+                        <a href="@($"emocja/{emotion.Name}")" class="btn btn-primary">Edytuj</a>
                     </td>
                 </tr>
             }
@@ -59,27 +59,3 @@ else
 }
 
 <a href="@($"emocja")" class="btn btn-primary">Dodaj nową emocję</a>
-
-@* <h2>Dodaj emocję</h2>
-
-@if (!string.IsNullOrEmpty(addEmotionstatusMessage))
-{
-    <div class="alert @addEmotionstatusClass">
-    @addEmotionstatusMessage
-</div>
-}
-
-<EditForm Model="@newEmotion" OnValidSubmit="@AddEmotion">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <div style="margin-top: 15px;" class="form-group">
-        <label for="name">Nazwa</label>
-        <InputText id="name" class="form-control" @bind-Value="@newEmotion.Name" />
-    </div>
-    <div style="margin-top: 15px;" class="form-group">
-        <label for="description">Opis</label>
-        <InputText id="description" class="form-control" @bind-Value="@newEmotion.Description" />
-    </div>
-    <button type="submit" style="margin-top: 10px;" class="btn btn-primary">Dodaj</button>
-</EditForm> *@

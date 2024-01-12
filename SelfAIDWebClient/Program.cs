@@ -9,8 +9,9 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<IEmotionService, EmotionService>();
 builder.Services.AddHttpClient<IEmotionService, EmotionService>(client =>
 {
-    client.BaseAddress = new Uri("https://selfaid.azurewebsites.net/api/Emotion");
+    client.BaseAddress = new Uri("https://selfaid.azurewebsites.net/api/");
 });
+
 
 var app = builder.Build();
 

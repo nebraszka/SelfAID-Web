@@ -11,6 +11,8 @@ internal class EmotionService : IEmotionService
 {
     private readonly HttpClient _httpClient;
 
+    private string urlPostfix = "Emotion";
+
     public EmotionService(HttpClient httpClient)
     {
         _httpClient = httpClient;
@@ -21,7 +23,7 @@ internal class EmotionService : IEmotionService
         try
         {
             var itemJson = new StringContent(JsonConvert.SerializeObject(emotion), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("", itemJson);
+            var response = await _httpClient.PostAsync(urlPostfix, itemJson);
 
             /*
             TODO: Teraz nie mogę tego tak zrobić, bo gdy emocja nie jest unikalna to 
@@ -47,55 +49,11 @@ internal class EmotionService : IEmotionService
         }
     }
 
-    public async Task<ServiceResponse<List<GetEmotionDto>>?> DeleteEmotion(int id)
-    {
-        try
-        {
-            var response = await _httpClient.DeleteAsync($"{id}");
-            if (response.IsSuccessStatusCode)
-            {
-                var responseBody = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<ServiceResponse<List<GetEmotionDto>>>(responseBody);
-            }
-            return null;
-        }
-        catch (Exception ex)
-        {
-            return new ServiceResponse<List<GetEmotionDto>>
-            {
-                Success = false,
-                Message = ex.Message
-            };
-        }
-    }
-
-    public async Task<ServiceResponse<List<GetEmotionDto>>?> DeleteAllEmotions()
-    {
-        try
-        {
-            var response = await _httpClient.DeleteAsync("");
-            if (response.IsSuccessStatusCode)
-            {
-                var responseBody = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<ServiceResponse<List<GetEmotionDto>>>(responseBody);
-            }
-            return null;
-        }
-        catch (Exception ex)
-        {
-            return new ServiceResponse<List<GetEmotionDto>>
-            {
-                Success = false,
-                Message = ex.Message
-            };
-        }
-    }
-
     public async Task<ServiceResponse<List<GetEmotionDto>>?> GetAllEmotions()
     {
         try
         {
-            var response = await _httpClient.GetAsync("");
+            var response = await _httpClient.GetAsync(urlPostfix);
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
@@ -118,7 +76,7 @@ internal class EmotionService : IEmotionService
         try
         {
             var itemJson = new StringContent(JsonConvert.SerializeObject(emotion), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PutAsync($"{emotion.Name}", itemJson);
+            var response = await _httpClient.PutAsync($"{urlPostfix}/{emotion.Name}", itemJson);
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
@@ -140,7 +98,7 @@ internal class EmotionService : IEmotionService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"{name}");
+            var response = await _httpClient.GetAsync($"{urlPostfix}/{name}");
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
@@ -160,9 +118,40 @@ internal class EmotionService : IEmotionService
 
     public async Task<ServiceResponse<List<GetEmotionDto>>?> DeleteEmotion(string name)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            return new ServiceResponse<List<GetEmotionDto>>
+            {
+                Success = false,
+                Message = "Name cannot be empty"
+            };
+        }
+
         try
         {
-            var response = await _httpClient.DeleteAsync($"{name}");
+            var response = await _httpClient.DeleteAsync($"{urlPostfix}/{name}");
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<ServiceResponse<List<GetEmotionDto>>>(responseBody);
+            }
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return new ServiceResponse<List<GetEmotionDto>>
+            {
+                Success = false,
+                Message = ex.Message
+            };
+        }
+    }
+
+        public async Task<ServiceResponse<List<GetEmotionDto>>?> DeleteAllEmotions()
+    {
+        try
+        {
+            var response = await _httpClient.DeleteAsync(urlPostfix);
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
