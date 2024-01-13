@@ -9,6 +9,11 @@
 
     <main>
         <div class="top-row px-4">
+            <AuthorizeView>
+                <Authorized>
+                    <p>Jesteś zalogowany jako @context.User.Identity.Name</p>
+                </Authorized>
+            </AuthorizeView>
             <image src="selfaidicon1.png" alt="Selfaid" class="logo" width="auto" height="45" />
         </div>
 
