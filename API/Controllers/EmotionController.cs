@@ -2,6 +2,7 @@ using SelfAID.CommonLib.Services;
 using SelfAID.CommonLib.Dtos.Emotion;
 using SelfAID.CommonLib.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SelfAID.API.Controllers
 {
@@ -32,6 +33,7 @@ namespace SelfAID.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<ServiceResponse<List<GetEmotionDto>>>> PostEmotion([FromBody] AddEmotionDto emotion)
         {
             var response = await _emotionService.AddEmotion(emotion);
@@ -39,6 +41,7 @@ namespace SelfAID.API.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<ActionResult<ServiceResponse<UpdateEmotionDto>>> PutEmotion([FromBody] UpdateEmotionDto updateEmotionDto)
         {
             var response = await _emotionService.UpdateEmotion(updateEmotionDto);
@@ -46,6 +49,7 @@ namespace SelfAID.API.Controllers
         }
 
         [HttpDelete("{name}")]
+        [Authorize]
         public async Task<ActionResult> DeleteEmotion(string name)
         {
             var response = await _emotionService.DeleteEmotion(name);
@@ -53,6 +57,7 @@ namespace SelfAID.API.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         public async Task<ActionResult> DeleteAllEmotions()
         {
             var response = await _emotionService.DeleteAllEmotions();

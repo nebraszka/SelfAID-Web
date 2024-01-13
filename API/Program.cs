@@ -4,8 +4,23 @@ using SelfAID.API.Services.EmotionService;
 using SelfAID.CommonLib.Services;
 using Microsoft.EntityFrameworkCore;
 using SelfAID.API.Services.UserService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
 
 // Add services to the container.
 builder.Services.AddDbContext<DataContext>(options =>
@@ -41,6 +56,8 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
