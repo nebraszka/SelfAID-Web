@@ -1,4 +1,6 @@
+global using Microsoft.AspNetCore.Components.Authorization;
 using SelfAID.CommonLib.Services;
+using SelfAID.WebClient.Authorization;
 using SelfAID.WebClient.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddAuthorizationCore();
 builder.Services.AddSingleton<IEmotionService, EmotionService>();
 builder.Services.AddHttpClient<IEmotionService, EmotionService>(client =>
 {
@@ -28,6 +32,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

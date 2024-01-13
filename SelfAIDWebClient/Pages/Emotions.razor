@@ -32,9 +32,12 @@ else
             <th>
                 Opis
             </th>
-            <th>
-                Zarządzaj
-            </th>
+            <AuthorizeView>
+                <th>
+                    Zarządzaj
+                </th>
+            </AuthorizeView>
+
         </tr>
     </thead>
     <tbody>
@@ -49,13 +52,24 @@ else
                 <tr>
                     <td>@emotion.Name</td>
                     <td>@emotion.Description</td>
-                    <td>
-                        <a href="@($"emocja/{emotion.Name}")" class="btn btn-primary">Edytuj</a>
-                    </td>
+                    <AuthorizeView>
+                        <td>
+                            <a href="@($"emocja/{emotion.Name}")" class="btn btn-primary">Edytuj</a>
+                        </td>
+                    </AuthorizeView>
                 </tr>
             }
         </tbody>
     </table>
 }
 
-<a href="@($"emocja")" class="btn btn-primary">Dodaj nową emocję</a>
+<br />
+<AuthorizeView>
+    <NotAuthorized>
+        <p style="color: red">Aby dodawać i edytować emocje musisz być zalogowany.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView>
+    <a href="@($"emocja")" class="btn btn-primary">Dodaj nową emocję</a>
+</AuthorizeView>
