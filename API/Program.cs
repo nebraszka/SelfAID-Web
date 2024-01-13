@@ -3,6 +3,7 @@ using SelfAID.API.Data;
 using SelfAID.API.Services.EmotionService;
 using SelfAID.CommonLib.Services;
 using Microsoft.EntityFrameworkCore;
+using SelfAID.API.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IEmotionService, EmotionService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddHttpsRedirection(options =>
 {

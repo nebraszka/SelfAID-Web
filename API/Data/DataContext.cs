@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SelfAID.CommonLib.Models;
 using SelfAID.API.Data.DataGenerators;
+using SelfAID.CommonLib.Models.User;
 
 namespace SelfAID.API.Data
 {
@@ -9,6 +10,7 @@ namespace SelfAID.API.Data
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
         public DbSet<Emotion> Emotions => Set<Emotion>();
+        public DbSet<User> Users => Set<User>();
 
         public void SeedDatabase()
         {
