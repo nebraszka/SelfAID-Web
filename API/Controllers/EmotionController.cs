@@ -18,7 +18,7 @@ namespace SelfAID.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ServiceResponse<List<GetEmotionDto>>>> GetAllEmotion() 
+        public async Task<ActionResult<ServiceResponse<List<GetEmotionDto>>>> GetAllEmotion()
         {
             var response = await _emotionService.GetAllEmotions();
             return Ok(response);
@@ -78,4 +78,4 @@ namespace SelfAID.API.Controllers
             return Ok(response);
         }
     }
-} 
+}

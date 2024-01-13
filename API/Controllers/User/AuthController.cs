@@ -3,6 +3,7 @@ using SelfAID.CommonLib.Models.User;
 using SelfAID.CommonLib.Dtos.User;
 using SelfAID.CommonLib.Models;
 using SelfAID.API.Services.UserService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SelfAID.API.Controllers
 {
@@ -12,6 +13,19 @@ namespace SelfAID.API.Controllers
     {
 
         private readonly IUserService _userService;
+
+        [HttpGet, Authorize]
+        public ActionResult<ServiceResponse<string>> GetMe()
+        {
+            var userName = User?.Identity?.Name;
+
+            if (userName == null)
+            {
+                return NotFound(new ServiceResponse<string> { Message = "Użytkownik nie jest zalogowany." });
+            }
+
+            return Ok(new ServiceResponse<string> { Data = userName });
+        }
 
         public AuthController(IUserService userService)
         {
@@ -32,6 +46,6 @@ namespace SelfAID.API.Controllers
             return Ok(response);
         }
 
-        
+
     }
 }
