@@ -16,11 +16,17 @@ static void ConfigureHttpClient(HttpClient client)
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddAuthorizationCore();
+
+builder.Services.AddScoped<CustomAuthStateProviderFactory>();
+builder.Services.AddScoped<AuthenticationStateProvider>(provider => 
+    provider.GetRequiredService<CustomAuthStateProviderFactory>().Create());
+
+
 builder.Services.AddSingleton<IEmotionService, EmotionService>();
-builder.Services.AddHttpClient<IEmotionService, EmotionService>(ConfigureHttpClient);
 builder.Services.AddSingleton<IAuthService, AuthService>();
+
+builder.Services.AddHttpClient<IEmotionService, EmotionService>(ConfigureHttpClient);
 builder.Services.AddHttpClient<IAuthService, AuthService>(ConfigureHttpClient);
 
 var app = builder.Build();
@@ -46,7 +52,3 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
-
-
-//Czasem przy zapisz musze czekac az wyskoczy message i dopiero przy drugim kliknieciu
-// Bardziej szcvzegolowy komunikat

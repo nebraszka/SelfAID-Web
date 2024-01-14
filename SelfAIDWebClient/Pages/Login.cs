@@ -17,6 +17,10 @@ public partial class Login : ComponentBase
     [Inject]
     private NavigationManager navigationManager { get; set; }
 
+    [Inject]
+    private IJSRuntime jSRuntime { get; set; }
+
+
     protected string Message = string.Empty;
     public UserDto user = new UserDto();
 
@@ -25,8 +29,10 @@ public partial class Login : ComponentBase
         var response = await authService.LoginUser(user);
         if (response != null && response.Success)
         {
-            var jwtToken = response.Data;
-            await ((CustomAuthStateProvider)authenticationStateProvider).SetAuthenticationStateAsync(jwtToken);
+            await jSRuntime.InvokeVoidAsync("setCookie", "authToken", response.Data, 1); // 1 day
+
+            var customAuthProvider = authenticationStateProvider as CustomAuthStateProvider;
+            customAuthProvider?.NotifyUserAuthentication(response.Data);
             navigationManager.NavigateTo("/");
         }
         else
@@ -34,4 +40,5 @@ public partial class Login : ComponentBase
             Message = response?.Message ?? "Błąd logowania";
         }
     }
+
 }

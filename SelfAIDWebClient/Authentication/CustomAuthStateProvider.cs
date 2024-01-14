@@ -6,28 +6,34 @@ namespace SelfAID.WebClient.Authorization
 {
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
-        // private readonly IJSRuntime _jsRuntime;
+        private readonly IJSRuntime _jsRuntime;
 
-        // public CustomAuthStateProvider(IJSRuntime jsRuntime)
-        // {
-        //     _jsRuntime = jsRuntime;
-        // }
-
-        public async Task SetAuthenticationStateAsync(string jwtToken)
+        public CustomAuthStateProvider(IJSRuntime jsRuntime)
         {
-            var identity = new ClaimsIdentity(ParseClaimsFromJwt(jwtToken), "jwt");
-
-            var user = new ClaimsPrincipal(identity);
-            var state = new AuthenticationState(user);
-
-            // await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "jwtToken", jwtToken);
-
-            NotifyAuthenticationStateChanged(Task.FromResult(state));
+            _jsRuntime = jsRuntime;
         }
 
-        public override Task<AuthenticationState> GetAuthenticationStateAsync()
+        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            return Task.FromResult(new AuthenticationState(new ClaimsPrincipal()));
+            var identity = new ClaimsIdentity();
+            var user = new ClaimsPrincipal(identity);
+
+            try
+            {
+                var authToken = await _jsRuntime.InvokeAsync<string>("getCookie", "authToken");
+                if (!string.IsNullOrEmpty(authToken))
+                {
+                    var claims = ParseClaimsFromJwt(authToken);
+                    identity = new ClaimsIdentity(claims, "jwt");
+                    user = new ClaimsPrincipal(identity);
+                }
+            }
+            catch
+            {
+                // Obsługa błędów, np. uszkodzonego tokena
+            }
+
+            return new AuthenticationState(user);
         }
 
         public static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
@@ -46,6 +52,20 @@ namespace SelfAID.WebClient.Authorization
                 case 3: base64 += "="; break;
             }
             return Convert.FromBase64String(base64);
+        }
+
+        public void NotifyUserAuthentication(string token)
+        {
+            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
+            var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
+            NotifyAuthenticationStateChanged(authState);
+        }
+
+        public void MarkUserAsLoggedOut()
+        {
+            var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
+            var authState = Task.FromResult(new AuthenticationState(anonymousUser));
+            NotifyAuthenticationStateChanged(authState);
         }
     }
 }
