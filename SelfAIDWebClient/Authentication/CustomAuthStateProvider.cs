@@ -1,31 +1,33 @@
 using System.Security.Claims;
 using System.Text.Json;
+using Microsoft.JSInterop;
 
 namespace SelfAID.WebClient.Authorization
 {
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
-        private readonly ILocalStorageService _localStorageService;
+        // private readonly IJSRuntime _jsRuntime;
 
-        public CustomAuthStateProvider(ILocalStorageService localStorageService)
-        {
-            _localStorageService = localStorageService;
-        }
-        
-        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
-        {
-            // TODO - not hardcoded
-            string token = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImFkbWluIiwiZXhwIjoxNzA1MjQ0NTgzfQ.o9DVV5TW9fKShq839oVcG1HiLNEFYYc-HkwzuMcmz2U0BfT7Q8RQXG66PjVbL69k7EaUQjlOSJXAJKU5Flh6tQ";
+        // public CustomAuthStateProvider(IJSRuntime jsRuntime)
+        // {
+        //     _jsRuntime = jsRuntime;
+        // }
 
-            var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
-            // var identity = new ClaimsIdentity();
-            
+        public async Task SetAuthenticationStateAsync(string jwtToken)
+        {
+            var identity = new ClaimsIdentity(ParseClaimsFromJwt(jwtToken), "jwt");
+
             var user = new ClaimsPrincipal(identity);
             var state = new AuthenticationState(user);
 
-            NotifyAuthenticationStateChanged(Task.FromResult(state));
+            // await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "jwtToken", jwtToken);
 
-            return state;
+            NotifyAuthenticationStateChanged(Task.FromResult(state));
+        }
+
+        public override Task<AuthenticationState> GetAuthenticationStateAsync()
+        {
+            return Task.FromResult(new AuthenticationState(new ClaimsPrincipal()));
         }
 
         public static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)

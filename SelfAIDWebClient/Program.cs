@@ -12,7 +12,6 @@ static void ConfigureHttpClient(HttpClient client)
     client.BaseAddress = new Uri("https://selfaid.azurewebsites.net/api/");
 }
 
-
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
