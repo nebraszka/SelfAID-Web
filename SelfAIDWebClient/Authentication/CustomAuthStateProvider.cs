@@ -6,11 +6,11 @@ namespace SelfAID.WebClient.Authorization
 {
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
-        private readonly IJSRuntime _jsRuntime;
+        private readonly TokenService _tokenService;
 
-        public CustomAuthStateProvider(IJSRuntime jsRuntime)
+        public CustomAuthStateProvider(TokenService tokenService)
         {
-            _jsRuntime = jsRuntime;
+            _tokenService = tokenService;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -18,19 +18,12 @@ namespace SelfAID.WebClient.Authorization
             var identity = new ClaimsIdentity();
             var user = new ClaimsPrincipal(identity);
 
-            try
+            var authToken = _tokenService.GetToken();
+            if (!string.IsNullOrEmpty(authToken))
             {
-                var authToken = await _jsRuntime.InvokeAsync<string>("getCookie", "authToken");
-                if (!string.IsNullOrEmpty(authToken))
-                {
-                    var claims = ParseClaimsFromJwt(authToken);
-                    identity = new ClaimsIdentity(claims, "jwt");
-                    user = new ClaimsPrincipal(identity);
-                }
-            }
-            catch
-            {
-                // Obsługa błędów, np. uszkodzonego tokena
+                var claims = ParseClaimsFromJwt(authToken);
+                identity = new ClaimsIdentity(claims, "jwt");
+                user = new ClaimsPrincipal(identity);
             }
 
             return new AuthenticationState(user);

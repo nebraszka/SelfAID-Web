@@ -18,7 +18,7 @@ public partial class Login : ComponentBase
     private NavigationManager navigationManager { get; set; }
 
     [Inject]
-    private IJSRuntime jSRuntime { get; set; }
+    private TokenService tokenService { get; set; }
 
 
     protected string Message = string.Empty;
@@ -29,7 +29,7 @@ public partial class Login : ComponentBase
         var response = await authService.LoginUser(user);
         if (response != null && response.Success)
         {
-            await jSRuntime.InvokeVoidAsync("setCookie", "authToken", response.Data, 1); // 1 day
+            tokenService.SetToken(response.Data);
 
             var customAuthProvider = authenticationStateProvider as CustomAuthStateProvider;
             customAuthProvider?.NotifyUserAuthentication(response.Data);

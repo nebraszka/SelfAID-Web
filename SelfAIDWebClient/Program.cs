@@ -12,22 +12,23 @@ static void ConfigureHttpClient(HttpClient client)
     client.BaseAddress = new Uri("https://selfaid.azurewebsites.net/api/");
 }
 
-// Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 
-builder.Services.AddScoped<CustomAuthStateProviderFactory>();
-builder.Services.AddScoped<AuthenticationStateProvider>(provider => 
-    provider.GetRequiredService<CustomAuthStateProviderFactory>().Create());
+builder.Services.AddSingleton<TokenService>();
+builder.Services.AddScoped<JwtTokenHandler>();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
+builder.Services.AddScoped<IEmotionService, EmotionService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddSingleton<IEmotionService, EmotionService>();
-builder.Services.AddSingleton<IAuthService, AuthService>();
+builder.Services.AddHttpClient<IEmotionService, EmotionService>(ConfigureHttpClient)
+                .AddHttpMessageHandler<JwtTokenHandler>();
 
-builder.Services.AddHttpClient<IEmotionService, EmotionService>(ConfigureHttpClient);
-builder.Services.AddHttpClient<IAuthService, AuthService>(ConfigureHttpClient);
+builder.Services.AddHttpClient<IAuthService, AuthService>(ConfigureHttpClient)
+                .AddHttpMessageHandler<JwtTokenHandler>();
 
 var app = builder.Build();
 
