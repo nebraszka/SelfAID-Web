@@ -1,5 +1,5 @@
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
+@inject TokenService TokenService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 @using SelfAID.WebClient.Authorization
@@ -22,7 +22,7 @@
 
     private async Task Logout()
     {
-        await JSRuntime.InvokeVoidAsync("eraseCookie", "authToken");
+        TokenService.RemoveToken();
 
         var customAuthStateProvider = AuthenticationStateProvider as CustomAuthStateProvider;
         customAuthStateProvider?.MarkUserAsLoggedOut();

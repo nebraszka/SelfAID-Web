@@ -8,14 +8,16 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <AuthorizeView>
-                <Authorized>
-                    <p style="float: center">Jesteś zalogowany jako @context.User.Identity.Name</p>
-                </Authorized>
-            </AuthorizeView>
+        <div class="top-row">
             <SelfAIDWebClient.Pages.LoginLogoutButton />
-            <image src="selfaidicon1.png" alt="Selfaid" class="logo" width="auto" height="45" />
+            <div class="login-container">
+                <AuthorizeView>
+                    <Authorized>
+                        <p class="login-info" style="color: #E0768F">Jesteś zalogowany jako @context.User.Identity.Name</p>
+                    </Authorized>
+                </AuthorizeView>
+            </div>
+            <image src="selfaidicon1.png" alt="Selfaid" width="auto" height="45" />
         </div>
 
         <article class="content px-4">

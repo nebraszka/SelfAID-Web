@@ -9,6 +9,11 @@ namespace SelfAID.WebClient.Authorization
             Token = token;
         }
 
+        public void RemoveToken()
+        {
+            Token = null;
+        }
+
         public string GetToken()
         {
             return Token;
