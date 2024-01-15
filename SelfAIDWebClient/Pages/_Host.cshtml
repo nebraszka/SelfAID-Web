@@ -3,6 +3,12 @@
 @namespace SelfAID.WebClient.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
+<script>
+    function redirectToGoogleLogin() {
+        window.location.href = 'http://selfaid.azurewebsites.net/api/Auth/google-login';
+    }
+</script>
+
 <!DOCTYPE html>
 <html lang="en">
 

@@ -20,6 +20,9 @@ public partial class Login : ComponentBase
     [Inject]
     private TokenService tokenService { get; set; }
 
+    [Inject]
+    private HttpClient Http { get; set; }
+
 
     protected string Message = string.Empty;
     public UserDto user = new UserDto();
@@ -41,9 +44,4 @@ public partial class Login : ComponentBase
         
         }
     }
-
-    protected async Task HandleGoogleLogin()
-    {
-    }
-
 }

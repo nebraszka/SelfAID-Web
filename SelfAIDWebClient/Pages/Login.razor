@@ -1,5 +1,5 @@
 @page "/login"
-
+@inject IJSRuntime JSRuntime
 @namespace SelfAID.WebClient.Pages
 
 <style>
@@ -53,9 +53,12 @@
             <InputText id="password" @bind-Value="user.Password" type="password" />
         </div>
         <button type="submit" class="login-button">Zaloguj</button>
-        <button class="google-login-button" @onclick="HandleGoogleLogin">
+        <button type="button" class="google-login-button"
+            @onclick="@(() => JSRuntime.InvokeVoidAsync("redirectToGoogleLogin"))">
             Zaloguj z Google
         </button>
+
+
         <br \>
         <p style="color: red">@Message</p>
     </EditForm>
