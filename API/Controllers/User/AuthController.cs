@@ -4,6 +4,11 @@ using SelfAID.CommonLib.Dtos.User;
 using SelfAID.CommonLib.Models;
 using SelfAID.API.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace SelfAID.API.Controllers
 {
@@ -46,6 +51,31 @@ namespace SelfAID.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("google-login")]
+        public IActionResult LoginWithGoogle()
+        {
+            var properties = new AuthenticationProperties { RedirectUri = Url.Action("GoogleResponse") };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
 
+        [HttpGet("signing-google")]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+
+            if (!authenticateResult.Succeeded)
+                return BadRequest("Autoryzacja nie powiodła się");
+
+            var claims = authenticateResult.Principal.Identities.FirstOrDefault()?.Claims;
+            var name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+
+            // Get this user from your database
+            var user = await ((UserService)_userService)._context.Users.FirstOrDefaultAsync(u => u.Username == name);
+            
+            var token = ((UserService)_userService).CreateToken(user);
+
+            return Ok(new ServiceResponse<string> { Data = token });
+            
+        }
     }
 }

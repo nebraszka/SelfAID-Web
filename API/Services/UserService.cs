@@ -8,15 +8,13 @@ using SelfAID.CommonLib.Dtos.User;
 using SelfAID.CommonLib.Models;
 using SelfAID.CommonLib.Models.User;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 
 namespace SelfAID.API.Services.UserService
 {
     public class UserService : IUserService
     {
         private readonly IMapper _mapper;
-        private readonly DataContext _context;
+        public readonly DataContext _context;
         private readonly IConfiguration _config;
 
         public UserService(IMapper mapper, DataContext context, IConfiguration config)
@@ -94,7 +92,35 @@ namespace SelfAID.API.Services.UserService
             return serviceResponse;
         }
 
-        private string CreateToken(User user)
+        public async Task<ServiceResponse<string>> LoginWithGoogle(string googleUsername)
+        {
+            var serviceResponse = new ServiceResponse<string>();
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == googleUsername);
+
+                if (user == null)
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Użytkownik nie istnieje.";
+                }
+                else
+                {
+                    serviceResponse.Message = "Użytkownik zalogowany za pomocą Google.";
+                }
+
+                serviceResponse.Data = CreateToken(user);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Błąd przy logowaniu Google: " + ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
+        public string CreateToken(User user)
         {
             List<Claim> claims = new List<Claim>
             {
@@ -111,5 +137,6 @@ namespace SelfAID.API.Services.UserService
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }
