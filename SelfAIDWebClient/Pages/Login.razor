@@ -17,6 +17,26 @@
         max-width: 600px;
         margin: auto;
     }
+
+    .login-button {
+        background-color: #E0768F;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        margin-top: 15px;
+        cursor: pointer;
+        float: left;
+    }
+
+    .google-login-button {
+        background-color: #4285F4;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        margin-top: 15px;
+        cursor: pointer;
+        float: right;
+    }
 </style>
 
 <h3>Zaloguj się</h3>
@@ -32,7 +52,10 @@
             <label for="password">Hasło</label>
             <InputText id="password" @bind-Value="user.Password" type="password" />
         </div>
-        <button type="submit" class="btn btn-primary">Zaloguj</button>
+        <button type="submit" class="login-button">Zaloguj</button>
+        <button class="google-login-button" @onclick="HandleGoogleLogin">
+            Zaloguj z Google
+        </button>
         <br \>
         <p style="color: red">@Message</p>
     </EditForm>

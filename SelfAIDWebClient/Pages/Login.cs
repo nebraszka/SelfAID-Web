@@ -38,7 +38,12 @@ public partial class Login : ComponentBase
         else
         {
             Message = response?.Message ?? "Błąd logowania";
+        
         }
+    }
+
+    protected async Task HandleGoogleLogin()
+    {
     }
 
 }
